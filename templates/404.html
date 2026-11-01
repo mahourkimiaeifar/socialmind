@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}صفحه پیدا نشد{% endblock %}
+{% block body_class %}page-error{% endblock %}
+
+{% block content %}
+<section class="error-state glass">
+  <span class="error-icon violet">{% icon 'search' 30 %}</span>
+  <p class="section-kicker">خطای ۴۰۴</p>
+  <h1>این صفحه پیدا نشد</h1>
+  <p>
+    ممکن است نشانی اشتباه باشد یا گفتگویی که به آن اشاره شده، حذف شده یا به نشست دیگری
+    تعلق داشته باشد. گفتگوها فقط برای همان نشست مرورگر قابل دسترسی هستند.
+  </p>
+  <div class="error-actions">
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">{% icon 'home' 16 %} نمای کلی</a>
+    <a class="btn btn-secondary" href="{% url 'studio_index' %}">{% icon 'message' 16 %} گفتگوهای من</a>
+  </div>
+</section>
+{% endblock %}

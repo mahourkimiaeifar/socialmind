@@ -1,0 +1,81 @@
+{% load studio_tags %}
+<article class="msg msg-{{ message.role }} msg-kind-{{ message.kind }}"
+         data-message-id="{{ message.id }}"
+         {% if message.client_id %}data-client-id="{{ message.client_id }}"{% endif %}>
+  <span class="msg-avatar {% if message.role == 'assistant' %}assistant{% else %}user{% endif %}" aria-hidden="true">
+    {% if message.role == 'assistant' %}{% icon 'wand' 15 %}{% else %}من{% endif %}
+  </span>
+  <div class="msg-body">
+    <div class="msg-meta">
+      <b>{% if message.role == 'assistant' %}Socia Mind{% else %}تو{% endif %}</b>
+      {% if message.kind == 'feedback' %}<span class="meta-tag">بازخورد</span>{% endif %}
+      {% if message.kind == 'error' %}<span class="meta-tag danger">خطا</span>{% endif %}
+      <time datetime="{{ message.created_at|date:'c' }}">{{ message.created_at|fa_time }}</time>
+    </div>
+
+    {% if message.kind == 'scenario' %}
+      <div class="scenario-card" data-scenario-card>
+        <div class="scenario-head">
+          <div>
+            <p class="section-kicker">خروجی آماده اجرا</p>
+            <h3>سناریوی پیشنهادی</h3>
+          </div>
+          <div class="scenario-actions">
+            {% if message.id != conversation.latest_scenario_id %}
+              <span class="stale-badge">نسخهٔ قبلی</span>
+            {% endif %}
+            <button class="btn btn-secondary btn-sm" type="button" data-copy-scenario>
+              {% icon 'copy' 15 %} کپی سناریو
+            </button>
+          </div>
+        </div>
+        {% if conversation.status == 'brief_ready' and message.id == conversation.latest_scenario_id %}
+          <p class="stale-note">بریف تغییر کرده است؛ این نسخه برای مرجع می‌ماند و نسخهٔ جدید پس از تأیید ساخته می‌شود.</p>
+        {% endif %}
+        <div class="scenario-text">{{ message.content|format_scenario }}</div>
+        <div class="scenario-foot">
+          <button class="btn btn-ghost btn-sm" type="button" data-focus-chat data-prefill="می‌خواهم این بخش را اصلاح کنم: ">
+            {% icon 'edit' 15 %} درخواست اصلاح
+          </button>
+          <button class="btn btn-ghost btn-sm" type="button" data-open-brief>
+            {% icon 'file' 15 %} دیدن بریف
+          </button>
+          <span class="scenario-privacy">{% icon 'lock' 13 %} منابع برای مدیر ثبت شد؛ متن جزوه نمایش داده نمی‌شود.</span>
+        </div>
+        <div class="scenario-raw" hidden>{{ message.content }}</div>
+      </div>
+
+    {% elif message.kind == 'brief' %}
+      <div class="chat-brief-card">
+        <div class="chat-brief-head">
+          <span class="chat-brief-icon">{% icon 'check' 17 %}</span>
+          <div><b>بریف برای تأیید</b><small>تا تأیید نکنی سناریویی ساخته نمی‌شود.</small></div>
+        </div>
+        <div class="chat-brief-body">{{ message.content|linebreaksbr }}</div>
+        <div class="chat-brief-actions">
+          <button class="btn btn-secondary btn-sm" type="button" data-open-brief>
+            {% icon 'edit' 15 %} باز کردن فرم بریف
+          </button>
+          {% if can_generate %}
+            <form class="inline-form" method="post" action="{% url 'conversation_generate' conversation.pk %}" data-generate-form>
+              {% csrf_token %}
+              <input type="hidden" name="confirm" value="1">
+              <button class="btn btn-primary btn-sm" type="submit" data-generate-button>
+                {% icon 'sparkles' 15 %}<span>تأیید و ساخت سناریو</span>
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+
+    {% elif message.kind == 'error' %}
+      <div class="message-error">
+        <span>{% icon 'alert' 18 %}</span>
+        <div>{{ message.content|linebreaksbr }}</div>
+      </div>
+
+    {% else %}
+      <div class="msg-bubble">{{ message.content|linebreaksbr }}</div>
+    {% endif %}
+  </div>
+</article>

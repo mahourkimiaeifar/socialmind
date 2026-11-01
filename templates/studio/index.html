@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}سناریونویس هوشمند{% endblock %}
+{% block body_class %}page-studio-index{% endblock %}
+
+{% block content %}
+<section class="page-intro studio-intro">
+  <div>
+    <p class="eyebrow"><span aria-hidden="true"></span> استودیوی هوشمند</p>
+    <h1>سناریونویس هوشمند</h1>
+    <p class="intro-copy">
+      یک گفتگوی فارسی، یک سؤال در هر نوبت. اول بریف ساخته می‌شود، بعد از تأیید تو
+      سناریویی اجرایی با قلاب، صحنه‌ها، متن گوینده و دعوت به اقدام نوشته می‌شود.
+    </p>
+    <div class="intro-actions">
+      <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit" {% if not can_start %}disabled{% endif %}>
+          {% icon 'plus' 17 %} گفتگوی جدید
+        </button>
+      </form>
+      <a class="btn btn-secondary" href="{% url 'help' %}">{% icon 'help' 17 %} روش کار</a>
+    </div>
+  </div>
+  <div class="studio-badge-card glass">
+    <span class="badge-orb">{% icon 'lock' 20 %}</span>
+    <b>منابع خصوصی می‌مانند</b>
+    <p>متن جزوه‌ها و نام فایل‌ها در گفتگو نمایش داده نمی‌شود؛ فقط سناریوی نهایی را می‌بینی.</p>
+  </div>
+</section>
+
+{% if not api_configured %}
+  <div class="notice-strip warn" role="note">
+    {% icon 'alert' 18 %}
+    <p>
+      <b>کلید مدل تنظیم نشده است.</b>
+      می‌توانی گفتگو و بریف را کامل کنی، اما ساخت سناریو تا وقتی مدیر
+      <code>OPENAI_API_KEY</code> را در فایل <code>.env</code> قرار ندهد کار نمی‌کند.
+    </p>
+  </div>
+{% endif %}
+
+{% if query %}
+  <div class="search-result-head">
+    <p>نتایج جستجو برای «{{ query }}»</p>
+    <a class="btn btn-ghost" href="{% url 'studio_index' %}">پاک کردن جستجو</a>
+  </div>
+{% endif %}
+
+{% if conversations %}
+  <section class="conversation-grid" aria-label="گفتگوهای من">
+    {% for item in conversations %}
+      <a class="conversation-card glass" href="{% url 'conversation_detail' item.pk %}">
+        <div class="conversation-card-top">
+          <span class="status-pill {{ item.status|status_tone }}">{{ item.get_status_display }}</span>
+          <span class="conversation-date">{{ item.updated_at|jalali_date }}</span>
+        </div>
+        <h2>{{ item.title }}</h2>
+        <p class="conversation-preview">
+          {% if item.brief.domain_product %}
+            {{ item.brief.domain_product|truncatechars:95 }}
+          {% else %}
+            گفتگو تازه شروع شده است.
+          {% endif %}
+        </p>
+        <div class="progress-row" aria-label="پیشرفت بریف">
+          <span class="progress-track"><span class="progress-fill" style="width: {{ item.brief_percent }}%"></span></span>
+          <small>{{ item.brief_progress|fa_num }} از {{ item.brief_total|fa_num }}</small>
+        </div>
+        <div class="conversation-card-foot">
+          <span>{% icon 'clock' 14 %} {{ item.updated_at|jalali_date }}</span>
+          <span class="card-link">ادامه {% icon 'arrow-left' 14 %}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </section>
+{% else %}
+  <div class="empty-state glass large">
+    <span class="empty-icon">{% icon 'wand' 30 %}</span>
+    <h2>{% if query %}گفتگویی با این عبارت پیدا نشد{% else %}اولین سناریو از یک سؤال شروع می‌شود{% endif %}</h2>
+    <p>
+      {% if query %}
+        عبارت دیگری را جستجو کن یا گفتگوی جدیدی بساز.
+      {% else %}
+        نگران کامل‌بودن جواب‌ها نباش. اگر چیزی را ندانستی، گزینه‌هایی پیشنهاد می‌دهیم
+        و هیچ‌کدام را بدون تأیید تو ثبت نمی‌کنیم.
+      {% endif %}
+    </p>
+    <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+      {% csrf_token %}
+      <button class="btn btn-primary" type="submit" {% if not can_start %}disabled{% endif %}>
+        {% icon 'plus' 17 %} شروع گفتگوی جدید
+      </button>
+    </form>
+  </div>
+{% endif %}
+
+<section class="section-block">
+  <div class="mini-guide glass">
+    <div><span>{% icon 'message' 18 %}</span><b>۱. یک سؤال در هر نوبت</b><p>سؤال بعدی به پاسخ قبلی تو بستگی دارد.</p></div>
+    <div><span>{% icon 'check' 18 %}</span><b>۲. تأیید بریف</b><p>تا وقتی بریف را تأیید نکنی، سناریویی ساخته نمی‌شود.</p></div>
+    <div><span>{% icon 'sparkles' 18 %}</span><b>۳. سناریوی قابل اجرا</b><p>قلاب، صحنه، متن گوینده، نوشتهٔ تصویر و CTA.</p></div>
+    <div><span>{% icon 'edit' 18 %}</span><b>۴. اصلاح در همان گفتگو</b><p>بریف را عوض کن؛ دوباره تأیید و سپس نسخهٔ جدید.</p></div>
+  </div>
+</section>
+
+<p class="session-note">
+  {% icon 'lock' 14 %}
+  گفتگوهای این صفحه به نشست همین مرورگر محدود هستند. با پاک‌کردن کوکی‌ها، دسترسی به آن‌ها از این مرورگر قطع می‌شود.
+</p>
+{% endblock %}

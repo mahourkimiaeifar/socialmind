@@ -1,0 +1,108 @@
+{% load studio_tags %}
+<div class="panel-head brief-head">
+  <div>
+    <p class="section-kicker">سند گفتگو</p>
+    <h2>بریف</h2>
+  </div>
+  <button class="btn btn-ghost btn-sm" type="button" data-open-brief>
+    {% icon 'edit' 14 %} ویرایش
+  </button>
+</div>
+
+<div class="brief-progress" aria-label="پیشرفت بریف">
+  <div class="progress-row">
+    <span class="progress-track"><span class="progress-fill" style="width: {{ conversation.brief_percent }}%"></span></span>
+    <b>{{ conversation.brief_progress|fa_num }} از {{ conversation.brief_total|fa_num }}</b>
+  </div>
+  <small>بخش‌های اصلی بریف</small>
+</div>
+
+{% if brief_items %}
+  <ul class="brief-list">
+    {% for item in brief_items %}
+      <li class="brief-field {% if not item.value %}is-missing{% endif %}">
+        <span class="brief-label">
+          {{ item.label }}
+          {% if item.is_hypothesis %}<em class="hypothesis-badge">فرضیهٔ تأییدشده</em>{% endif %}
+        </span>
+        <span class="brief-value">
+          {% if item.value %}{{ item.value|linebreaksbr }}{% else %}هنوز پرسیده نشده{% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if can_generate %}
+  <div class="confirm-card ready">
+    <span class="confirm-icon">{% icon 'check' 19 %}</span>
+    <div>
+      <b>بریف کامل است</b>
+      <p>یک‌بار خلاصه را در گفتگو بخوان. با کلیک روی دکمه، بریف تأیید و سناریو ساخته می‌شود.</p>
+    </div>
+    <form class="generate-form" method="post" action="{% url 'conversation_generate' conversation.pk %}" data-generate-form>
+      {% csrf_token %}
+      <input type="hidden" name="confirm" value="1">
+      <button class="btn btn-primary" type="submit" data-generate-button>
+        {% icon 'sparkles' 17 %}<span>تأیید و ساخت سناریو</span>
+      </button>
+    </form>
+  </div>
+{% elif conversation.status == 'generating' %}
+  <div class="confirm-card working" aria-live="polite">
+    <span class="button-spinner" aria-hidden="true"></span>
+    <div>
+      <b>در حال ساخت سناریو</b>
+      <p>این مرحله ممکن است تا یک دقیقه طول بکشد. صفحه را نبند.</p>
+    </div>
+  </div>
+{% elif conversation.status == 'generated' %}
+  <div class="confirm-card done">
+    <span class="confirm-icon">{% icon 'sparkles' 19 %}</span>
+    <div>
+      <b>سناریو آماده است</b>
+      <p>در گفتگو پایین برو و خروجی را ببین. برای تغییر، بریف را ویرایش و دوباره تأیید کن.</p>
+    </div>
+    <button class="btn btn-secondary" type="button" data-focus-chat data-prefill="می‌خواهم این بخش را اصلاح کنم: ">
+      {% icon 'edit' 16 %} درخواست اصلاح
+    </button>
+  </div>
+{% else %}
+  <div class="confirm-card pending">
+    <span class="confirm-icon">{% icon 'clock' 19 %}</span>
+    <div>
+      <b>{{ remaining_count|fa_num }} بخش دیگر باقی مانده</b>
+      <p>{% if missing_labels %}بخش‌های ناقص: {{ missing_labels|join:"، " }}{% else %}برای ساخت، بریف را کامل کن.{% endif %}</p>
+    </div>
+  </div>
+{% endif %}
+
+<details class="brief-editor" id="brief-editor" {% if show_brief_edit %}open{% endif %}>
+  <summary>{% icon 'edit' 15 %} فرم ویرایش بریف</summary>
+  <form method="post" action="{% url 'conversation_update_brief' conversation.pk %}" class="brief-form">
+    {% csrf_token %}
+    {% for field in brief_form %}
+      <label class="edit-field" for="{{ field.id_for_label }}">
+        <span>{{ field.label }}</span>
+        {{ field }}
+      </label>
+    {% endfor %}
+    <p class="form-note">
+      با ذخیرهٔ فرم، تأیید قبلی پاک می‌شود. اگر بخشی خالی بماند، گفتگو برای تکمیل آن ادامه پیدا می‌کند
+      و تا کامل‌شدن بریف، سناریوی جدیدی ساخته نمی‌شود.
+    </p>
+    <button class="btn btn-primary" type="submit">{% icon 'check' 16 %} ذخیرهٔ بریف</button>
+  </form>
+</details>
+
+<div class="brief-privacy">
+  {% icon 'lock' 14 %}
+  <span>متن کامل جزوه‌ها و نام فایل‌ها در این صفحه نمایش داده نمی‌شود. منابع بررسی‌شده در هر نوبت و منابع روشیِ استفاده‌شده فقط برای مدیر ثبت می‌شوند.</span>
+</div>
+
+{% if not api_configured %}
+  <div class="inline-warning compact" role="note">
+    {% icon 'alert' 14 %}
+    <span>کلید مدل تنظیم نشده؛ ساخت سناریو تا تنظیم <code>OPENAI_API_KEY</code> ممکن نیست.</span>
+  </div>
+{% endif %}

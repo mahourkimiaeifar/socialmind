@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}راهنمای استفاده{% endblock %}
+{% block body_class %}page-help{% endblock %}
+
+{% block content %}
+<section class="page-intro help-intro">
+  <div>
+    <p class="eyebrow"><span aria-hidden="true"></span> راهنمای کوتاه</p>
+    <h1>چطور از سناریونویس استفاده کنیم؟</h1>
+    <p class="intro-copy">
+      این نسخه یک جریان مشخص دارد: سؤال‌های کوتاه، ساختن بریف، تأیید صریح تو و بعد نوشتن
+      سناریو بر پایهٔ روش‌های جزوه‌ها. هیچ مرحله‌ای بدون اطلاع تو انجام نمی‌شود.
+    </p>
+    <div class="intro-actions">
+      <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">{% icon 'wand' 17 %} شروع گفتگوی جدید</button>
+      </form>
+      <a class="btn btn-secondary" href="{% url 'studio_index' %}">{% icon 'grid' 17 %} گفتگوهای من</a>
+    </div>
+  </div>
+  <div class="help-orb" aria-hidden="true">
+    <span>{% icon 'book' 30 %}</span>
+    <i class="help-ring"></i>
+  </div>
+</section>
+
+<div class="notice-strip" role="note">
+  {% icon 'info' 18 %}
+  <p>
+    <b>خلاصهٔ جریان:</b>
+    هر نوبت فقط یک سؤال می‌بینی. پاسخ‌ها در بریف ذخیره می‌شوند. وقتی بریف کامل شد،
+    خلاصه‌اش را می‌بینی و باید دکمهٔ «تأیید و ساخت سناریو» را بزنی. تا آن لحظه هیچ سناریویی
+    ساخته نمی‌شود.
+  </p>
+</div>
+
+<section class="help-grid">
+  <article class="help-card glass">
+    <span class="help-step">۱</span>
+    <h2>یک سؤال در هر نوبت</h2>
+    <p>
+      گفتگو از حوزهٔ کاری و محصول/خدمت شروع می‌شود و به مخاطب، دغدغهٔ جزئی، پیام اصلی،
+      هدف، امکانات اجرا، لحن، مدت و اقدام مورد انتظار می‌رسد. سؤال بعدی به پاسخ قبلی تو
+      وابسته است؛ سؤال‌های عمومی و تکراری نمی‌پرسیم.
+    </p>
+    <ul class="help-list">
+      <li>{% icon 'check' 14 %} اگر جواب کوتاه باشد، یک سؤال تکمیلی می‌آید.</li>
+      <li>{% icon 'check' 14 %} اگر چیزی را ندانستی، گزینه‌هایی پیشنهاد می‌شود.</li>
+      <li>{% icon 'check' 14 %} هیچ فرضیه‌ای بدون انتخاب صریح تو در بریف ثبت نمی‌شود.</li>
+    </ul>
+  </article>
+
+  <article class="help-card glass">
+    <span class="help-step">۲</span>
+    <h2>بریف قابل ویرایش</h2>
+    <p>
+      در ستون کنار گفتگو، پیشرفت بریف و همهٔ بخش‌ها را می‌بینی. با دکمهٔ «ویرایش» می‌توانی
+      هر بخش را دستی اصلاح کنی. بعد از هر تغییر، تأیید قبلی پاک می‌شود و باید دوباره
+      بریف را تأیید کنی.
+    </p>
+    <ul class="help-list">
+      <li>{% icon 'check' 14 %} بخش خالی، بریف را ناقص نگه می‌دارد.</li>
+      <li>{% icon 'check' 14 %} بخش‌های انتخاب‌شده از فرضیه‌ها با برچسب مشخص می‌شوند.</li>
+      <li>{% icon 'check' 14 %} تا بریف کامل و تأیید نشود، ساخت سناریو غیرفعال است.</li>
+    </ul>
+  </article>
+
+  <article class="help-card glass">
+    <span class="help-step">۳</span>
+    <h2>تأیید صریح، بعد ساخت</h2>
+    <p>
+      دکمهٔ «تأیید و ساخت سناریو» یک درخواست واقعی به مدل می‌فرستد. اگر کلید مدل روی سرور
+      تنظیم نشده یا نامعتبر باشد، پیام خطای روشن می‌بینی و هیچ سناریوی ساختگی جای خروجی
+      واقعی نمی‌نشیند.
+    </p>
+    <ul class="help-list">
+      <li>{% icon 'lock' 14 %} کلید فقط در متغیر محیطی سرور است، نه در مرورگر.</li>
+      <li>{% icon 'alert' 14 %} خطای شبکه، سقف مصرف یا پاسخ ناقص، پیام فارسی دارد.</li>
+      <li>{% icon 'refresh' 14 %} پیام و بریف تو در خطا حفظ می‌شود و می‌توانی دوباره تلاش کنی.</li>
+    </ul>
+  </article>
+
+  <article class="help-card glass">
+    <span class="help-step">۴</span>
+    <h2>خروجی سناریو</h2>
+    <p>
+      خروجی شامل ایده و پیام اصلی، دغدغهٔ مخاطب، تکنیک انتخابی و دلیلش، قلاب، صحنه‌ها با
+      بازهٔ زمانی و تصویر/دوربین، متن گوینده، نوشتهٔ روی تصویر، دعوت به اقدام و کپشن
+      پیشنهادی است.
+    </p>
+    <ul class="help-list">
+      <li>{% icon 'play' 14 %} صحنه‌ها با زمان تقریبی نوشته می‌شوند.</li>
+      <li>{% icon 'file' 14 %} کپی سناریو با یک دکمه انجام می‌شود.</li>
+      <li>{% icon 'edit' 14 %} برای نسخهٔ جدید، بریف را اصلاح و دوباره تأیید کن.</li>
+    </ul>
+  </article>
+</section>
+
+<section class="section-block">
+  <div class="section-head">
+    <div>
+      <p class="section-kicker">شفافیت</p>
+      <h2>چه چیزی را انجام نمی‌دهیم</h2>
+    </div>
+  </div>
+  <div class="limits-grid">
+    <article class="limit-card glass">
+      <span class="limit-icon red">{% icon 'shield' 19 %}</span>
+      <div>
+        <b>متن جزوه‌ها را نشان نمی‌دهیم</b>
+        <p>نه متن کامل، نه فایل PDF و نه نام فایل. منابع روشیِ در اختیار مدل فقط در پنل مدیریت ثبت می‌شوند.</p>
+      </div>
+    </article>
+    <article class="limit-card glass">
+      <span class="limit-icon amber">{% icon 'alert' 19 %}</span>
+      <div>
+        <b>ادعای قطعی پزشکی، حقوقی یا مالی نداریم</b>
+        <p>اگر موضوع به این حوزه‌ها نزدیک باشد، خروجی به تأیید متخصص معتبر ارجاع می‌دهد.</p>
+      </div>
+    </article>
+    <article class="limit-card glass">
+      <span class="limit-icon cyan">{% icon 'chart' 19 %}</span>
+      <div>
+        <b>وعدهٔ وایرال یا رشد تضمینی نمی‌دهیم</b>
+        <p>هیچ عدد، آمار پیج یا نتیجهٔ قطعی از خودمان نمی‌سازیم. آمار واقعی اینستاگرام در این نسخه وجود ندارد.</p>
+      </div>
+    </article>
+    <article class="limit-card glass">
+      <span class="limit-icon violet">{% icon 'users' 19 %}</span>
+      <div>
+        <b>داده‌های کسب‌وکار را از خودمان نمی‌سازیم</b>
+        <p>تنها منبع اطلاعات، بریف تأییدشدهٔ توست. اگر اطلاعات کم باشد، سؤال تکمیلی می‌پرسیم.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="help-faq glass">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">پرسش‌های رایج</p>
+        <h2>محدودیت‌ها و خطاها</h2>
+      </div>
+    </div>
+    <details class="faq-item" open>
+      <summary>گفتگوهای من کجا ذخیره می‌شوند؟</summary>
+      <p>
+        در پایگاه دادهٔ همین سرور. هر گفتگو به نشست همین مرورگر محدود است؛ اگر کوکی‌های مرورگر
+        را پاک کنی، دسترسی به گفتگوهای قبلی از این مرورگر قطع می‌شود. کاربر واردشده فقط
+        گفتگوهای خودش را می‌بیند.
+      </p>
+    </details>
+    <details class="faq-item">
+      <summary>چرا دکمهٔ ساخت سناریو غیرفعال یا خطادار است؟</summary>
+      <p>
+        سه دلیل رایج: بریف هنوز کامل یا تأیید نشده؛ کلید مدل روی سرور تنظیم نشده یا نامعتبر
+        است؛ یا سرویس مدل موقتاً در دسترس نیست. متن خطا دقیقاً می‌گوید کدام مورد رخ داده و
+        پیام‌های تو حفظ می‌شوند.
+      </p>
+    </details>
+    <details class="faq-item">
+      <summary>چرا برای بعضی موضوع‌ها مدرک روشی کافی پیدا نمی‌شود؟</summary>
+      <p>
+        اگر در جزوه‌ها شاهد روشی مرتبط پیدا نشود، به‌جای ساختن روش از خودمان، پیام شفاف
+        می‌بینی و یک سؤال تکمیلی می‌آید. بعد از اضافه‌کردن جزئیات واقعی، می‌توانی دوباره
+        تأیید و تلاش کنی.
+      </p>
+    </details>
+    <details class="faq-item">
+      <summary>سقف پیام و طول متن چقدر است؟</summary>
+      <p>
+        هر پیام حداکثر {{ message_max_length|fa_num }} نویسه است. هر گفتگو تا
+        {{ max_user_messages|fa_num }} پیام کاربر را می‌پذیرد. برای ادامهٔ کار، یک گفتگوی
+        جدید بساز.
+      </p>
+    </details>
+    <details class="faq-item">
+      <summary>آیا می‌توانم بریف را بعد از ساخت سناریو عوض کنم؟</summary>
+      <p>
+        بله. سناریوی قبلی برای مرجع می‌ماند. بعد از ویرایش بریف، باید دوباره تأیید کنی تا
+        نسخهٔ جدید ساخته شود. تا تأیید جدید، سناریوی تازه‌ای ساخته نمی‌شود.
+      </p>
+    </details>
+  </div>
+</section>
+
+<p class="session-note">
+  {% icon 'lock' 14 %}
+  برای مدیریت جزوه‌ها و دیدن منابع ثبت‌شده، فقط مدیر از طریق پنل مدیریت دسترسی دارد.
+</p>
+{% endblock %}

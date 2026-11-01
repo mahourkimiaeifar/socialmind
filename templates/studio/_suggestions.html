@@ -1,0 +1,10 @@
+{% load studio_tags %}
+{% if suggestions %}
+  <div class="suggestions" aria-label="پیشنهادهای پاسخ">
+    <span class="suggestions-label">{% icon 'sparkles' 14 %} اگر کمکی می‌کند:</span>
+    {% for item in suggestions %}
+      <button class="chip" type="button" data-send="{{ item }}">{{ item }}</button>
+    {% endfor %}
+    <button class="chip chip-dontknow" type="button" data-send="نمی‌دانم">نمی‌دانم</button>
+  </div>
+{% endif %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}{{ conversation.title }}{% endblock %}
+{% block body_class %}page-conversation{% endblock %}
+
+{% block content %}
+<div class="studio-page" data-conversation-id="{{ conversation.pk }}">
+  <header class="studio-head">
+    <div class="studio-title-wrap">
+      <a class="back-link" href="{% url 'studio_index' %}">
+        {% icon 'arrow-right' 15 %} همهٔ گفتگوها
+      </a>
+      <h1 id="conversation-title">{{ conversation.title }}</h1>
+      <div class="studio-meta">
+        <span id="status-chip" class="status-pill {{ conversation.status|status_tone }}" data-status="{{ conversation.status }}">
+          {{ conversation.get_status_display }}
+        </span>
+        <span>{% icon 'clock' 14 %} آخرین به‌روزرسانی {{ conversation.updated_at|jalali_date }}</span>
+        <span>{% icon 'message' 14 %} {{ remaining_messages|fa_num }} پیام تا سقف</span>
+      </div>
+    </div>
+    <div class="studio-head-actions">
+      <button class="btn btn-ghost history-toggle" type="button" data-history-toggle aria-controls="history-panel" aria-expanded="false">
+        {% icon 'grid' 16 %} تاریخچه
+      </button>
+      <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary" type="submit">{% icon 'plus' 16 %} گفتگوی جدید</button>
+      </form>
+      <form class="inline-form" method="post" action="{% url 'conversation_delete' conversation.pk %}" data-confirm="این گفتگو و همهٔ پیام‌هایش حذف شود؟">
+        {% csrf_token %}
+        <button class="icon-btn danger" type="submit" aria-label="حذف این گفتگو">{% icon 'trash' 18 %}</button>
+      </form>
+    </div>
+  </header>
+
+  <div class="studio-grid">
+    <aside class="history-panel glass" id="history-panel" aria-label="تاریخچهٔ گفتگوها">
+      <div class="panel-head">
+        <div>
+          <p class="section-kicker">گفتگوهای من</p>
+          <h2>تاریخچه</h2>
+        </div>
+        <button class="icon-btn history-close" type="button" data-history-close aria-label="بستن تاریخچه">{% icon 'x' 18 %}</button>
+      </div>
+      <form class="history-search" method="get" action="{% url 'studio_index' %}" role="search">
+        <label class="sr-only" for="history-search-input">جستجو در گفتگوهای من</label>
+        {% icon 'search' 15 %}
+        <input id="history-search-input" type="search" name="q" placeholder="جستجو..." autocomplete="off">
+      </form>
+      <div class="history-list">
+        {% for item in history %}
+          <a class="history-item {% if item.pk == conversation.pk %}active{% endif %}" href="{% url 'conversation_detail' item.pk %}">
+            <span class="history-dot {{ item.status|status_tone }}" aria-hidden="true"></span>
+            <span class="history-copy">
+              <b {% if item.pk == conversation.pk %}data-history-title-for="{{ conversation.pk }}"{% endif %}>{{ item.title }}</b>
+              <small>{{ item.updated_at|jalali_date }} · {{ item.brief_progress|fa_num }} از {{ item.brief_total|fa_num }}</small>
+            </span>
+            {% if item.pk == conversation.pk %}<span class="sr-only">گفتگوی فعلی</span>{% endif %}
+          </a>
+        {% empty %}
+          <p class="history-empty">هنوز گفتگوی دیگری نیست.</p>
+        {% endfor %}
+      </div>
+      <form class="inline-form history-new" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">{% icon 'plus' 16 %} گفتگوی جدید</button>
+      </form>
+      <p class="panel-note">{% icon 'lock' 13 %} فقط گفتگوهای همین نشست مرورگر.</p>
+    </aside>
+
+    <section class="chat-panel glass" aria-label="گفتگوی سناریونویس">
+      <header class="chat-head">
+        <div class="assistant-id">
+          <span class="assistant-orb" aria-hidden="true">{% icon 'wand' 18 %}</span>
+          <div>
+            <b>Socia Mind</b>
+            <small>سناریونویس · بریف‌محور</small>
+          </div>
+        </div>
+        <span class="private-badge">{% icon 'lock' 13 %} منابع خصوصی</span>
+      </header>
+
+      <div class="chat-stream" id="chat-stream" role="log" aria-live="polite" aria-relevant="additions" aria-label="پیام‌های گفتگو">
+        {% for message in message_list %}
+          {% include 'studio/_message.html' with message=message conversation=conversation %}
+        {% endfor %}
+        <div id="chat-end" class="chat-end" aria-hidden="true"></div>
+        <div class="typing-row" id="typing-indicator" hidden>
+          <span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>در حال پردازش...</span>
+        </div>
+      </div>
+
+      <div class="chat-error" id="chat-error" role="alert" hidden></div>
+
+      <div class="suggestions-wrap" id="suggestions-wrap">
+        {% include 'studio/_suggestions.html' %}
+      </div>
+
+      <form class="composer" id="chat-form" method="post" action="{% url 'conversation_message' conversation.pk %}" data-max="{{ max_message_length }}">
+        {% csrf_token %}
+        <label class="sr-only" for="chat-input">پیام تو به سناریونویس</label>
+        <textarea id="chat-input" name="text" rows="1" maxlength="{{ max_message_length }}"
+                  placeholder="پاسخ یا بازخوردت را بنویس..." aria-describedby="chat-hint" required></textarea>
+        <input type="hidden" name="client_id" id="client-id" value="">
+        <div class="composer-foot">
+          <span id="chat-hint" class="composer-hint">
+            <span id="char-count">۰</span> / {{ max_message_length|fa_num }} نویسه
+            · Enter برای ارسال، Shift+Enter برای خط جدید
+          </span>
+          <button class="btn btn-primary" type="submit" id="send-btn">
+            {% icon 'send' 16 %}<span>ارسال</span>
+          </button>
+        </div>
+      </form>
+
+      {% if not api_configured %}
+        <div class="inline-warning" role="note">
+          {% icon 'alert' 15 %}
+          کلید مدل روی سرور تنظیم نشده است. گفتگو و بریف کار می‌کند، اما دکمهٔ ساخت سناریو
+          تا تنظیم <code>OPENAI_API_KEY</code> پاسخ خطا می‌دهد.
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="brief-panel glass" id="brief-panel" aria-label="بریف و وضعیت ساخت">
+      {% include 'studio/_brief_panel.html' %}
+    </aside>
+  </div>
+</div>
+
+<button class="scrim history-scrim" type="button" data-history-close hidden aria-label="بستن تاریخچه"></button>
+{% endblock %}

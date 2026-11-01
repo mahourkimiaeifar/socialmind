@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}نشست امنیتی نامعتبر{% endblock %}
+{% block body_class %}page-error{% endblock %}
+
+{% block content %}
+<section class="error-state glass" role="alert">
+  <span class="error-icon amber">{% icon 'shield' 30 %}</span>
+  <p class="section-kicker">خطای امنیتی · ۴۰۳</p>
+  <h1>نشست امنیتی منقضی شده است</h1>
+  <p>
+    فرم با یک نشانهٔ امنیتی قدیمی ارسال شد. این اتفاق معمولاً بعد از باز ماندن طولانی صفحه،
+    پاک شدن کوکی‌ها یا باز کردن سایت در پنجرهٔ دیگر رخ می‌دهد. هیچ پیامی از تو حذف نشده است.
+  </p>
+  <div class="error-actions">
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">{% icon 'refresh' 16 %} بارگذاری دوبارهٔ صفحه</a>
+    <a class="btn btn-secondary" href="{% url 'studio_index' %}">{% icon 'message' 16 %} بازگشت به گفتگوها</a>
+  </div>
+  <p class="error-hint">
+    اگر دوباره تکرار شد، صفحه را کامل ببند و از همان مرورگر یک نشست تازه باز کن.
+  </p>
+</section>
+{% endblock %}

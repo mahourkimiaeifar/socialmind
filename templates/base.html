@@ -1,0 +1,152 @@
+{% load static studio_tags %}<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080914">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="description" content="Socia Mind — دستیار سناریونویسی فارسی بر پایهٔ روش‌های جزوه‌ها">
+  <title>{% block title %}Socia Mind{% endblock %} | Socia Mind</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar glass" id="sidebar" aria-label="ناوبری اصلی">
+      <div class="brand-row">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <div class="brand-copy">
+          <b>Socia Mind</b>
+          <small>Social Intelligence</small>
+        </div>
+        <button class="icon-btn sidebar-close" type="button" data-menu-close aria-label="بستن منو">
+          {% icon 'x' 19 %}
+        </button>
+      </div>
+
+      <nav class="main-nav" aria-label="بخش‌های سایت">
+        <p class="nav-label">فضای کار</p>
+        <a class="nav-item {% if active_nav == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}" {% if active_nav == 'dashboard' %}aria-current="page"{% endif %}>
+          {% icon 'home' 19 %}<span>نمای کلی</span>
+        </a>
+        <a class="nav-item {% if active_nav == 'studio' %}active{% endif %}" href="{% url 'studio_index' %}" {% if active_nav == 'studio' %}aria-current="page"{% endif %}>
+          {% icon 'wand' 19 %}<span>سناریونویس هوشمند</span><i class="nav-dot" aria-hidden="true"></i>
+        </a>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'calendar' 19 %}<span>تقویم محتوا</span><em>به‌زودی</em>
+        </button>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'send' 19 %}<span>انتشار</span><em>به‌زودی</em>
+        </button>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'message' 19 %}<span>گفتگوهای شبکه‌ها</span><em>به‌زودی</em>
+        </button>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'chart' 19 %}<span>تحلیل و گزارش</span><em>به‌زودی</em>
+        </button>
+
+        <p class="nav-label nav-label-spaced">ابزارها</p>
+        <a class="nav-item {% if active_nav == 'help' %}active{% endif %}" href="{% url 'help' %}" {% if active_nav == 'help' %}aria-current="page"{% endif %}>
+          {% icon 'book' 19 %}<span>راهنمای استفاده</span>
+        </a>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'file' 19 %}<span>کتابخانه محتوا</span><em>به‌زودی</em>
+        </button>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'users' 19 %}<span>همکاری تیمی</span><em>به‌زودی</em>
+        </button>
+        <button class="nav-item is-soon" type="button" disabled aria-disabled="true" title="در نسخهٔ اول فعال نیست">
+          {% icon 'clapper' 19 %}<span>تدوینگر هوشمند</span><em>به‌زودی</em>
+        </button>
+      </nav>
+
+      <div class="sidebar-card">
+        <span class="sidebar-orb" aria-hidden="true">{% icon 'sparkles' 20 %}</span>
+        <b>از یک سؤال ساده شروع کن</b>
+        <p>سؤال‌ها یکی‌یکی می‌آیند، بریف ساخته می‌شود و فقط بعد از تأیید تو سناریو نوشته می‌شود.</p>
+        <a class="sidebar-cta" href="{% url 'studio_index' %}">
+          ورود به استودیو {% icon 'arrow-left' 15 %}
+        </a>
+      </div>
+
+      <div class="session-card">
+        <span class="session-avatar" aria-hidden="true">{% icon 'user' 18 %}</span>
+        <span class="session-copy">
+          <b>{% if user.is_authenticated %}{{ user.get_username }}{% else %}کاربر مهمان{% endif %}</b>
+          <small>گفتگوها به همین نشست مرورگر محدود است.</small>
+        </span>
+        <a class="session-link" href="{% url 'admin:index' %}" title="{% if user.is_staff %}پنل مدیریت{% else %}ورود مدیر{% endif %}">
+          {% icon 'external' 16 %}<span class="sr-only">{% if user.is_staff %}پنل مدیریت{% else %}ورود مدیر{% endif %}</span>
+        </a>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="mobile-brand">
+          <button class="icon-btn" type="button" data-menu-open aria-label="باز کردن منو" aria-controls="sidebar" aria-expanded="false">
+            {% icon 'menu' 20 %}
+          </button>
+          <span class="brand-mark mini" aria-hidden="true"><span></span><span></span><span></span></span>
+        </div>
+
+        <form class="search-box" method="get" action="{% url 'studio_index' %}" role="search">
+          <label class="sr-only" for="global-search">جستجو در گفتگوهای من</label>
+          {% icon 'search' 17 %}
+          <input id="global-search" type="search" name="q" value="{{ query|default:'' }}" placeholder="جستجو در گفتگوهای من..." autocomplete="off">
+          <button class="search-submit" type="submit" aria-label="جستجو">{% icon 'arrow-left' 15 %}</button>
+        </form>
+
+        <div class="top-actions">
+          <a class="icon-btn" href="{% url 'help' %}" aria-label="راهنمای استفاده">
+            {% icon 'help' 19 %}
+          </a>
+          <button class="icon-btn is-disabled" type="button" disabled aria-disabled="true" title="اعلان‌ها در نسخهٔ اول فعال نیست" aria-label="اعلان‌ها، به‌زودی">
+            {% icon 'bell' 19 %}<span class="notification-dot" aria-hidden="true"></span>
+          </button>
+          <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+            {% csrf_token %}
+            <button class="btn btn-primary top-new" type="submit">
+              {% icon 'plus' 17 %}<span>گفتگوی جدید</span>
+            </button>
+          </form>
+        </div>
+      </header>
+
+      {% if messages %}
+        <div class="flash-stack" role="status" aria-live="polite">
+          {% for message in messages %}
+            <div class="flash flash-{{ message.tags|default:'info' }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <main id="main-content" class="dashboard" tabindex="-1">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="site-foot">
+        <span>Socia Mind · نسخهٔ ۱.۰</span>
+        <span>در این نسخه اتصال واقعی اینستاگرام، انتشار خودکار و آمار پیج فعال نیست.</span>
+      </footer>
+    </section>
+  </div>
+
+  <button class="scrim nav-scrim" type="button" data-menu-close hidden aria-label="بستن منو"></button>
+  <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <noscript>
+    <div class="noscript-note">
+      جاوااسکریپت غیرفعال است. ارسال پیام با بارگذاری صفحه کار می‌کند، اما تجربهٔ چت بدون آن کامل نیست.
+    </div>
+  </noscript>
+
+  <script src="{% static 'js/app.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

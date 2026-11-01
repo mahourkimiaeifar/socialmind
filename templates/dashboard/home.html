@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load studio_tags %}
+{% block title %}نمای کلی{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
+
+{% block content %}
+<section class="page-intro welcome-row">
+  <div>
+    <p class="eyebrow"><span aria-hidden="true"></span> {{ now|jalali_date }}</p>
+    <h1>از یک گفتگوی ساده، به سناریوی اجرایی برس.</h1>
+    <p class="intro-copy">
+      Socia Mind در نسخهٔ اول روی یک چیز تمرکز دارد: شناختن کسب‌وکار تو و نوشتن سناریوی اینستاگرام
+      بر اساس روش‌های جزوه‌ها. هیچ دادهٔ اینستاگرامی یا آماری از خودمان نمی‌سازیم.
+    </p>
+    <div class="intro-actions">
+      <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">{% icon 'wand' 17 %} شروع گفتگوی جدید</button>
+      </form>
+      <a class="btn btn-secondary" href="{% url 'studio_index' %}">{% icon 'message' 17 %} گفتگوهای قبلی</a>
+    </div>
+  </div>
+  <div class="hero-orb" aria-hidden="true">
+    <span class="hero-ring ring-a"></span>
+    <span class="hero-ring ring-b"></span>
+    <span class="hero-core">{% icon 'sparkles' 30 %}</span>
+    <span class="hero-chip chip-a">بریف</span>
+    <span class="hero-chip chip-b">تأیید</span>
+    <span class="hero-chip chip-c">سناریو</span>
+  </div>
+</section>
+
+<div class="notice-strip" role="note">
+  {% icon 'info' 18 %}
+  <p>
+    <b>دامنهٔ نسخهٔ اول:</b>
+    اتصال واقعی به اینستاگرام، انتشار خودکار، آمار واقعی پیج، پرداخت و قابلیت‌های نمایشی
+    در این نسخه فعال نیستند. بخش‌های غیرفعال با برچسب «به‌زودی» مشخص شده‌اند.
+  </p>
+</div>
+
+<section class="stat-grid" aria-label="آمار واقعی این نسخه">
+  <article class="stat-card glass">
+    <span class="stat-icon violet">{% icon 'message' 20 %}</span>
+    <span class="stat-label">گفتگوهای من</span>
+    <strong>{{ stats.conversation_count|fa_num }}</strong>
+    <small>در همین نشست مرورگر</small>
+  </article>
+  <article class="stat-card glass">
+    <span class="stat-icon cyan">{% icon 'check' 20 %}</span>
+    <span class="stat-label">سناریوهای ساخته‌شده</span>
+    <strong>{{ stats.scenario_count|fa_num }}</strong>
+    <small>فقط پس از تأیید بریف</small>
+  </article>
+  <article class="stat-card glass">
+    <span class="stat-icon pink">{% icon 'book' 20 %}</span>
+    <span class="stat-label">جزوه‌های ایندکس‌شده</span>
+    <strong>{{ stats.document_count|fa_num }}</strong>
+    <small>{{ stats.page_count|fa_num }} صفحه در SQLite</small>
+  </article>
+  <article class="stat-card glass">
+    <span class="stat-icon amber">{% icon 'search' 20 %}</span>
+    <span class="stat-label">بخش‌های قابل جستجو</span>
+    <strong>{{ stats.chunk_count|fa_num }}</strong>
+    <small>{% if stats.scanned_count %}{{ stats.scanned_count|fa_num }} فایل بدون متن{% else %}همهٔ فایل‌ها متن دارند{% endif %}</small>
+  </article>
+</section>
+
+<section class="feature-grid">
+  <article class="feature-card glass feature-main">
+    <div class="feature-head">
+      <span class="feature-icon">{% icon 'wand' 24 %}</span>
+      <span class="soon-pill soon-pill-live">فعال</span>
+    </div>
+    <h2>سناریونویس هوشمند</h2>
+    <p>
+      یک سؤال در هر نوبت؛ از حوزهٔ کاری شروع می‌کنیم و به دغدغهٔ جزئی مخاطب می‌رسیم.
+      بریف را می‌بینی، اصلاح می‌کنی و فقط بعد از تأیید، سناریو ساخته می‌شود.
+    </p>
+    <ol class="steps">
+      <li><b>۱</b><span>بریف را با سؤال‌های ساده کامل کن.</span></li>
+      <li><b>۲</b><span>خلاصهٔ بریف را ببین و تأیید کن.</span></li>
+      <li><b>۳</b><span>سناریو و منابعِ ثبت‌شده برای مدیر را دریافت کن.</span></li>
+    </ol>
+    <a class="btn btn-primary feature-cta" href="{% url 'studio_index' %}">
+      {% icon 'arrow-left' 17 %} رفتن به استودیو
+    </a>
+  </article>
+
+  <article class="feature-card glass feature-status">
+    <div class="feature-head">
+      <span class="feature-icon cyan">{% icon 'shield' 23 %}</span>
+      <span class="status-pill {% if stats.api_configured %}is-ok{% else %}is-warn{% endif %}">
+        {% if stats.api_configured %}مدل تنظیم شده{% else %}مدل تنظیم نشده{% endif %}
+      </span>
+    </div>
+    <h2>وضعیت پایگاه دانش</h2>
+    <dl class="status-list">
+      <div><dt>جزوه‌ها</dt><dd>{{ stats.document_count|fa_num }} فایل</dd></div>
+      <div><dt>صفحات</dt><dd>{{ stats.page_count|fa_num }} صفحه</dd></div>
+      <div><dt>بخش‌های متنی</dt><dd>{{ stats.chunk_count|fa_num }} بخش</dd></div>
+      <div><dt>فایل بدون متن</dt><dd>{% if stats.scanned_count %}{{ stats.scanned_count|fa_num }}{% else %}ندارد{% endif %}</dd></div>
+    </dl>
+    <p class="muted-note">
+      {% if stats.api_configured %}
+        کلید مدل فقط در متغیر محیطی سرور است و به مرورگر فرستاده نمی‌شود.
+      {% else %}
+        برای ساخت سناریو، مدیر باید <code>OPENAI_API_KEY</code> را در فایل <code>.env</code> تنظیم کند.
+      {% endif %}
+    </p>
+    {% if user.is_staff %}
+      <a class="btn btn-secondary" href="{% url 'admin:knowledge_document_changelist' %}">
+        {% icon 'file' 16 %} مدیریت جزوه‌ها
+      </a>
+    {% else %}
+      <p class="muted-note small">فهرست و متن کامل جزوه‌ها فقط در پنل مدیریت دیده می‌شود.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="section-block">
+  <div class="section-head">
+    <div>
+      <p class="section-kicker">آخرین فعالیت</p>
+      <h2>گفتگوهای اخیر من</h2>
+    </div>
+    <a class="btn btn-ghost" href="{% url 'studio_index' %}">همهٔ گفتگوها {% icon 'arrow-left' 15 %}</a>
+  </div>
+
+  {% if recent_conversations %}
+    <div class="recent-list">
+      {% for item in recent_conversations %}
+        <a class="recent-item glass" href="{% url 'conversation_detail' item.pk %}">
+          <span class="recent-icon">{% icon 'message' 18 %}</span>
+          <span class="recent-copy">
+            <b>{{ item.title }}</b>
+            <small>{{ item.updated_at|jalali_date }} · {{ item.brief_progress|fa_num }} از {{ item.brief_total|fa_num }} بخش بریف</small>
+          </span>
+          <span class="status-pill {{ item.status|status_tone }}">{{ item.get_status_display }}</span>
+          {% icon 'chevron-left' 16 %}
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state glass">
+      <span class="empty-icon">{% icon 'wand' 26 %}</span>
+      <h3>هنوز گفتگویی نساخته‌ای</h3>
+      <p>اولین گفتگو با یک سؤال ساده دربارهٔ حوزهٔ کاری‌ات شروع می‌شود.</p>
+      <form class="inline-form" method="post" action="{% url 'studio_new' %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">{% icon 'plus' 17 %} شروع اولین گفتگو</button>
+      </form>
+    </div>
+  {% endif %}
+</section>
+
+<section class="section-block">
+  <div class="section-head">
+    <div>
+      <p class="section-kicker">مرز شفاف</p>
+      <h2>قابلیت‌های نسخه‌های بعد</h2>
+    </div>
+    <span class="soon-pill">به‌زودی</span>
+  </div>
+  <div class="soon-grid">
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'calendar' 22 %}</span>
+      <h3>تقویم محتوا</h3>
+      <p>برنامه‌ریزی هفتگی و صف انتشار، بدون دادهٔ نمایشی.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'send' 22 %}</span>
+      <h3>انتشار خودکار</h3>
+      <p>اتصال واقعی به اینستاگرام در نسخه‌های بعد اضافه می‌شود.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'chart' 22 %}</span>
+      <h3>تحلیل و گزارش</h3>
+      <p>آمار واقعی پیج؛ نه نمودار و عدد ساختگی.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'message' 22 %}</span>
+      <h3>صندوق گفتگو</h3>
+      <p>پیام‌ها و کامنت‌های شبکه‌ها در یک جا.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'file' 22 %}</span>
+      <h3>کتابخانه محتوا</h3>
+      <p>آرشیو پیش‌نویس‌ها و سناریوهای موفق.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+    <article class="soon-card glass">
+      <span class="soon-icon">{% icon 'users' 22 %}</span>
+      <h3>همکاری تیمی</h3>
+      <p>نقش‌ها و بازبینی، بعد از تثبیت جریان اصلی.</p>
+      <span class="soon-pill">به‌زودی</span>
+    </article>
+  </div>
+</section>
+{% endblock %}

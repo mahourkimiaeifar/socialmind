@@ -1,0 +1,25 @@
+{% load static studio_tags %}<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080914">
+  <title>خطای سرور | Socia Mind</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="page-error standalone-error">
+  <main id="main-content" class="error-state glass" role="alert">
+    <span class="error-icon red" aria-hidden="true">!</span>
+    <p class="section-kicker">خطای ۵۰۰</p>
+    <h1>مشکلی در سرور پیش آمد</h1>
+    <p>
+      درخواست تو به پایان نرسید. گفتگوها و بریف‌های ذخیره‌شده در پایگاه داده باقی می‌مانند.
+      چند لحظه بعد دوباره تلاش کن. اگر خطا تکرار شد، مدیر باید گزارش سرور را بررسی کند.
+    </p>
+    <div class="error-actions">
+      <a class="btn btn-primary" href="/">{% icon 'home' 16 %} بازگشت به نمای کلی</a>
+    </div>
+  </main>
+</body>
+</html>

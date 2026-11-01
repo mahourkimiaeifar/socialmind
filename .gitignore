@@ -1,0 +1,26 @@
+# متغیرهای محیطی و اطلاعات محرمانه
+.env
+.env.*
+!.env.example
+.admin-credentials.txt
+private/
+*.pem
+*.key
+
+# پایتون و محیط مجازی
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+staticfiles/
+
+# گزارش‌های محلی و فایل‌های آزمایشی
+*.log
+mock-llm-last-request.json
+
+# ابزارهای ویرایشگر و سیستم
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
